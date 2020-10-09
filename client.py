@@ -21,18 +21,16 @@ def receive():
     while True:
         try:
             message = client.recv(1024).decode('ascii')
-            # greet new users
-            if message == 'USERNAME':
-                client.send(args.username.encode('ascii'))
+            data = json.loads(message)
+            if 'user_tag' in data.keys():
+                # greet new users
+                json_str = json.dumps({data['user_tag']:args.username})
+                client.send(json_str.encode('ascii'))
             else:
                 # chat and other messages
-                try:
-                    data = json.loads(message)
-                    print('[{}] {}: {}'.format(data['timestamp'], data['username'], data['message']))
-                except:
-                    print("[Client] Unexpected error:", sys.exc_info())
+                print('[{}] {}: {}'.format(data['timestamp'], data['username'], data['message']))
         except:
-            print("An error occured!")
+            print("[Client] Unexpected error:", sys.exc_info())
             client.close()
             break
         

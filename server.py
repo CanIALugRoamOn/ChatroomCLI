@@ -50,9 +50,12 @@ def handle(client):
             broadcast(message)
         except:
             index = clients.index(client)
+            
             clients.remove(client)
             client.close()
             username = usernames[index]
+
+            # left notification
             message = json.dumps({'timestamp': datetime.now().strftime('%H:%M %d/%m/%y'), 'username': '', 'message': '{} left!'.format(username)})
             broadcast(message.encode('ascii'))
             usernames.remove(username)
@@ -64,16 +67,24 @@ def receive():
     """
     while True:
         client, address = server.accept()
-        print('Connected with {}'.format(str(address)))       
-        client.send('USERNAME'.encode('ascii'))
-        username = client.recv(1024).decode('ascii')
+        print('Connected with {}'.format(str(address)))     
+
+        # request for username
+        client.send(json.dumps({'user_tag': 'username'}).encode('ascii'))
+
+        # receive username
+        username = json.loads(client.recv(1024).decode('ascii'))['username']
         usernames.append(username)
         clients.append(client)
         print('Username is {}'.format(username))
+
+        # notifications
         message = json.dumps({'timestamp': datetime.now().strftime('%H:%M %d/%m/%y'), 'username': '', 'message': '{} joined!'.format(username)})
         broadcast(message.encode('ascii'))
+        
         status = json.dumps({'timestamp': datetime.now().strftime('%H:%M %d/%m/%y'), 'username': '', 'message': 'Connected to server!'})
         client.send(status.encode('ascii'))
+        
         # start thread
         thread = threading.Thread(target=handle, args=(client,))
         thread.start()
