@@ -56,9 +56,10 @@ See how many messages were sent:
 sqlite> select count(username) from message;
 ```
 
-![alt text][chatroom]
+## How it looks like
+![Chatroom Example][chatroom]
 
-![alt text][db]
+![Datbase Example][db]
 
 [chatroom]: https://github.com/CanIALugRoamOn/ChatroomCLI/tree/main/test/chatroom.png "Chatroom Example"
 [db]: https://github.com/CanIALugRoamOn/ChatroomCLI/tree/main/test/db.png "Database Example"
